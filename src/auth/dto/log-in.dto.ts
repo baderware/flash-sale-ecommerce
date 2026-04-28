@@ -1,8 +1,9 @@
-import { PickType } from '@nestjs/swagger';
-import { CreateUserDto } from './create-user.dto';
+import { IsEmail, IsString } from 'class-validator';
 
-// This creates a safe, separate LoginDto that only contains name and password
-export class LoginDto extends PickType(CreateUserDto, [
-  'name',
-  'password',
-] as const) {}
+export class LoginDto {
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  password: string;
+}

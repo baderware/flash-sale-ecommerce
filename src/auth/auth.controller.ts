@@ -1,7 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
+//import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/log-in.dto';
 import { ApiTags, ApiResponse, ApiOperation } from '@nestjs/swagger';
 
@@ -15,10 +16,10 @@ export class AuthController {
   ) {}
 
   @Post('register')
-  @ApiOperation({ summary: 'register uaer in db' }) // Describes what the endpoint does
+  @ApiOperation({ summary: 'register user in db' }) // Describes what the endpoint does
   @ApiResponse({ status: 201, description: 'registered ' }) // Documents the response
   @ApiResponse({ status: 400, description: 'input problem' })
-  register(@Body() dto: CreateUserDto) {
+  register(@Body() dto: RegisterDto) {
     return this.usersService.create(dto);
   }
 

@@ -18,7 +18,7 @@ import { PassportModule } from '@nestjs/passport';
       inject: [ConfigService],
       useFactory: (configservice: ConfigService) => ({
         secret: configservice.get('SECRET_KEY'),
-        signOptions: { expiresIn: '1d' },
+        signOptions: { expiresIn: '1h' },
       }),
     }),
   ],

@@ -10,23 +10,27 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(name: string, password: string) {
-    const user = await this.usersService.findAll();
-    const found = user.find((u) => u.name === name);
+  // 1. Better validation: Search by EMAIL directly in the DB
+  async validateUser(email: string, pass: string): Promise<any> {
+    const user = await this.usersService.findOneByEmail(email); // Create this method in UsersService
+    
+    if (!user) throw new UnauthorizedException('User not found');
 
-    if (!found) throw new UnauthorizedException('User not found');
+    const isMatch = await bcrypt.compare(pass, user.password);
+    if (!isMatch) throw new UnauthorizedException('Invalid credentials');
 
-    const isMatch = await bcrypt.compare(password, found.password);
-    if (!isMatch) throw new UnauthorizedException('Invalid password');
-
-    return found;
+    // Strip password before returning
+    const { password, ...result } = user;
+    return result;
   }
 
-  async login(data: any) {
-
-    const user = await this.validateUser(data.name, data.password);
-
-    const payload = { sub: user.id, name: user.name };
+  async login(user: any) {
+    // 2. Add the ROLE to the payload so the frontend and guards can see it
+    const payload = { 
+      sub: user.id, 
+      email: user.email, 
+      role: user.role // Now your JwtAuthGuard can check permissions!
+    };
 
     return {
       access_token: this.jwtService.sign(payload),
