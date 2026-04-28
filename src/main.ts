@@ -7,9 +7,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = new DocumentBuilder()
     .setTitle('My book API')
-    .setDescription('The API description for my book project')
+    .setDescription('The API description for my fresh-sale e-commerce')
     .setVersion('1.0')  //well i might have dift versions :)
-    .addBearerAuth() // this is for using JWT authentication!
+    .addBearerAuth() // this is for using JWT authentication
     .build();
 
   // Create the document based on the config
