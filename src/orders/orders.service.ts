@@ -2,6 +2,7 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { OrderStatus } from './entities/order-status.entity';
 import { Order } from './entities/order.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { Product } from '../products/entities/product.entity';
@@ -35,8 +36,8 @@ export class OrdersService {
       });
 
       // 3. Optional: Deduct stock from the product here
-      // product.stock -= item.quantity;
-      // await this.productRepo.save(product);
+       product.stock -= item.quantity;
+       await this.productRepo.save(product);
     }
 
     // 4. Create and save the final order
@@ -48,7 +49,16 @@ export class OrdersService {
 
     return await this.orderRepo.save(order);
   }
+  async updateStatus(orderId: string, status: OrderStatus) {
+    const order = await this.orderRepo.findOneBy({ id: orderId });
+    
+    if (!order) {
+      throw new NotFoundException(`Order #${orderId} not found`);
+    }
 
+    order.status = status;
+    return await this.orderRepo.save(order);
+  }
   // Find all orders for ONE specific user
   async findByUser(userId: number) {
     return await this.orderRepo.find({

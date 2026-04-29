@@ -1,9 +1,10 @@
 // src/orders/orders.controller.ts
-import { Controller, Get, Post, Body, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Req, Param, Patch } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { Auth } from 'src/auth.decorator';
 import { UserRole } from '../users/entities/user.entity';
+import { UpdateOrderStatusDto } from './dto/update-status.dto';
 
 @Controller('orders')
 export class OrdersController {
@@ -14,6 +15,7 @@ export class OrdersController {
   @Auth() // Must be logged in
   create(@Req() req, @Body() dto: CreateOrderDto) {
     // req.user is attached by your JwtAuthGuard
+    console.log(req.user);
     return this.ordersService.create(req.user.userId, dto);
   }
 
@@ -22,10 +24,17 @@ export class OrdersController {
   findMyOrders(@Req() req) {
     return this.ordersService.findByUser(req.user.userId);
   }
-
+  @Patch(':id/status')
+  @Auth(UserRole.ADMIN) // <--- Bouncer checks for Admin!
+  updateStatus(
+    @Param('id') id: string, 
+    @Body() updateStatusDto: UpdateOrderStatusDto
+  ) {
+    return this.ordersService.updateStatus(id, updateStatusDto.status);
+  }
 
   @Get()
-  @Auth(UserRole.ADMIN) 
+  @Auth(UserRole.ADMIN)
   findAll() {
     return this.ordersService.findAll();
   }

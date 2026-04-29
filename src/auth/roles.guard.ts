@@ -15,14 +15,17 @@ export class RolesGuard implements CanActivate {
     ]);
 
     // If no roles are required, we let them through
-    if (!requiredRoles) return true;
-
+    //if (!requiredRoles) return true;--->this one was añways returning false since [] is truthy which is sent when we use Auth()
+    if (!requiredRoles || requiredRoles.length === 0) {
+      return true;
+    }
     //  Get the user from the request --attached by JwtAuthGuard--
     const { user } = context.switchToHttp().getRequest();
 
     // Check if the user has the required role
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    const hasRole = requiredRoles.some((role) => user.role?.includes(role));
+    
+    //const hasRole = requiredRoles.some((role) => user.role?.includes(role));
+    const hasRole = requiredRoles.includes(user.role);
     
     if (!hasRole) {
       throw new ForbiddenException('You do not have permission to access this resource');
