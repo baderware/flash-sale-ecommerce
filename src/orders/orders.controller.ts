@@ -1,4 +1,4 @@
-// src/orders/orders.controller.ts
+
 import { Controller, Get, Post, Body, Req, Param, Patch } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -14,7 +14,7 @@ export class OrdersController {
   @Post()
   @Auth() // Must be logged in
   create(@Req() req, @Body() dto: CreateOrderDto) {
-    // req.user is attached by your JwtAuthGuard
+    // req.user is attached by JwtAuthGuard
     console.log(req.user);
     return this.ordersService.create(req.user.userId, dto);
   }

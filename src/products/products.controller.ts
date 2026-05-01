@@ -27,7 +27,7 @@ export class ProductsController {
   }
 
   @Get()
-  @Auth(UserRole.ADMIN)
+  //@Auth(UserRole.ADMIN)
   findAll() {
     return this.productsService.findAllProducts();
   }
